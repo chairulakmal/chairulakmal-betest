@@ -4,7 +4,7 @@
   "description": "Example express app with json web token authentication",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development && node index.js",
+    "dev": "NODE_ENV=development && node --watch index.js",
     "start": "node index.js",
     "lint": "npx eslint --fix . --ignore-pattern tests/ --ignore-pattern **config**",
     "test": "NODE_ENV=test && npx jest --detectOpenHandles",
@@ -20,8 +20,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "mongodb-memory-server": "^9.1.8",
-    "mongoose": "^8.3.2"
+    "mongoose": "^8.3.2",
+    "redis": "^4.6.13"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.2",

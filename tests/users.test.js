@@ -1,35 +1,51 @@
 const request = require('supertest');
 const app = require('../app');
+const { encodeToken } = require('../utils/auth');
 
 describe('User API', () => {
+    const password = 'test_password'
     // Define a test user object for creating/updating
     const testUser = {
         userName: 'test_user',
         accountNumber: '1234567890',
         emailAddress: 'test@example.com',
         identityNumber: '1234567890',
+        password
     };
 
     let userId; // Variable to store the ID of the created user
+    let token; // Variable to store the ID of the logged in user
 
-    // Test POST /users endpoint to create a user
-    test('POST /users should create a new user', async () => {
+    // Test POST /register endpoint to create a user
+    test('POST /register should create a new user', async () => {
         const response = await request(app)
-            .post('/users')
+            .post('/register')
             .send(testUser);
+
+        delete testUser.password // password hash is not sent after successful registration
 
         expect(response.status).toBe(201);
         expect(response.body).toMatchObject(testUser);
         userId = response.body._id; // Save the created user ID for later use
-        console.log(response.body);
+        token = encodeToken({ id: userId })
+    });
+
+    // Test POST /login endpoint to authenticate a user and get a token
+    test('POST /login should authenticate a user', async () => {
+        testUser.password = password
+        const response = await request(app)
+            .post('/login')
+            .send(testUser);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toMatchObject({ token });
     });
 
     // Test GET /users/:userId endpoint to retrieve a user by ID
     test('GET /users/:userId should retrieve a user by ID', async () => {
-        console.log({ userId });
-
         const response = await request(app)
-            .get(`/users/${userId}`);
+            .get(`/users/${userId}`)
+            .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(200);
         expect(response.body.userName).toBe(testUser.userName);
@@ -41,6 +57,7 @@ describe('User API', () => {
 
         const response = await request(app)
             .put(`/users/${userId}`)
+            .set('Authorization', `Bearer ${token}`)
             .send(updatedUser);
 
         expect(response.status).toBe(200);
@@ -50,7 +67,8 @@ describe('User API', () => {
     // Test GET /users/account/:accountNumber endpoint to retrieve a user by account number
     test('GET /users/account/:accountNumber should retrieve a user by account number', async () => {
         const response = await request(app)
-            .get(`/users/account/${testUser.accountNumber}`);
+            .get(`/users/account/${testUser.accountNumber}`)
+            .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(200);
         expect(response.body.accountNumber).toBe(testUser.accountNumber);
@@ -59,7 +77,8 @@ describe('User API', () => {
     // Test GET /users/identity/:identityNumber endpoint to retrieve a user by identity number
     test('GET /users/identity/:identityNumber should retrieve a user by identity number', async () => {
         const response = await request(app)
-            .get(`/users/identity/${testUser.identityNumber}`);
+            .get(`/users/identity/${testUser.identityNumber}`)
+            .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(200);
         expect(response.body.identityNumber).toBe(testUser.identityNumber);
@@ -68,7 +87,8 @@ describe('User API', () => {
     // Test DELETE /users/:userId endpoint to delete a user by ID
     test('DELETE /users/:userId should delete a user by ID', async () => {
         const response = await request(app)
-            .delete(`/users/${userId}`);
+            .delete(`/users/${userId}`)
+            .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(204);
     });
