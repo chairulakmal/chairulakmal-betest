@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const client = require('../caching');
+const { client, invalidateAll } = require('../utils/caching');
 const { encodeToken } = require('../utils/auth');
 const { comparePassword, hashPassword } = require('../utils/bcrypt');
 
@@ -23,8 +23,10 @@ exports.createUser = async (req, res, next) => {
     req.body.password = hashPassword(req.body.password);
     const newUser = new User(req.body);
     const savedUser = await newUser.save();
-    delete savedUser.password;
-    res.status(201).json(savedUser);
+    const user = savedUser.toObject();
+
+    delete user.password;
+    res.status(201).json(user);
   } catch (error) {
     error.status = 400;
     next(error);
@@ -45,7 +47,7 @@ exports.getUserById = async (req, res, next) => {
         error.status = 404;
         throw error;
       }
-      await client.hSet('user:id', req.params.userId, JSON.stringify(user));
+      await client.HSET('user:id', req.params.userId, JSON.stringify(user), 'EX', 3600);
       res.json(user);
     }
   } catch (error) {
@@ -67,7 +69,7 @@ exports.getUserByAccountNumber = async (req, res, next) => {
         error.status = 404;
         throw error;
       }
-      await client.hSet('user:accountNumber', req.params.accountNumber, JSON.stringify(user));
+      await client.HSET('user:accountNumber', req.params.accountNumber, JSON.stringify(user), 'EX', 3600);
       res.json(user);
     }
   } catch (error) {
@@ -89,7 +91,7 @@ exports.getUserByIdentityNumber = async (req, res, next) => {
         error.status = 404;
         throw error;
       }
-      await client.hSet('user:identityNumber', req.params.identityNumber, JSON.stringify(user));
+      await client.HSET('user:identityNumber', req.params.identityNumber, JSON.stringify(user), 'EX', 3600);
       res.json(user);
     }
   } catch (error) {
@@ -107,6 +109,7 @@ exports.updateUser = async (req, res, next) => {
       error.status = 404;
       throw error;
     }
+    await invalidateAll(req.userId, updatedUser);
     res.json(updatedUser);
   } catch (error) {
     if (error.status) next(error);
@@ -126,6 +129,8 @@ exports.deleteUser = async (req, res, next) => {
       error.status = 404;
       throw error;
     }
+
+    await invalidateAll(req.userId, deletedUser);
     res.status(204).json({ message: 'User deleted' });
   } catch (error) {
     next(error);

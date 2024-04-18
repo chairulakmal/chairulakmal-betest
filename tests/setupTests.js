@@ -1,6 +1,6 @@
 const app = require('../app');
 const mongoose = require('mongoose');
-const client = require('../caching');
+const { client } = require('../utils/caching');
 
 // Function to drop the database
 const dropDatabase = async () => {

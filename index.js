@@ -1,6 +1,6 @@
 require('./app');
 const mongoose = require('mongoose');
-const client = require('./caching');
+const { client } = require('./utils/caching');
 
 // Gracefully shut down the application
 const gracefulShutdown = async () => {
