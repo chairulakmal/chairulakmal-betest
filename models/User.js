@@ -20,6 +20,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'emailAddress is required'],
     unique: true,
+    validate: {
+      validator: function (value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      },
+      message: 'Invalid email address format',
+    },
   },
   identityNumber: {
     type: String,
