@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const client = require('../caching');
 const { encodeToken } = require('../utils/auth');
 const { comparePassword, hashPassword } = require('../utils/bcrypt');
 
@@ -33,13 +34,20 @@ exports.createUser = async (req, res, next) => {
 // Get a user by database ID
 exports.getUserById = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-      const error = new Error('User not found');
-      error.status = 404;
-      throw error;
+    const cachedUser = await client.hGet('user:id', req.params.userId);
+
+    if (cachedUser) {
+      res.json(JSON.parse(cachedUser));
+    } else {
+      const user = await User.findById(req.params.userId);
+      if (!user) {
+        const error = new Error('User not found');
+        error.status = 404;
+        throw error;
+      }
+      await client.hSet('user:id', req.params.userId, JSON.stringify(user));
+      res.json(user);
     }
-    res.json(user);
   } catch (error) {
     next(error);
   }
@@ -48,13 +56,20 @@ exports.getUserById = async (req, res, next) => {
 // Get a user by accountNumber
 exports.getUserByAccountNumber = async (req, res, next) => {
   try {
-    const user = await User.findOne({ accountNumber: req.params.accountNumber });
-    if (!user) {
-      const error = new Error('User not found');
-      error.status = 404;
-      throw error;
+    const cachedUser = await client.hGet('user:accountNumber', req.params.accountNumber);
+
+    if (cachedUser) {
+      res.json(JSON.parse(cachedUser));
+    } else {
+      const user = await User.findOne({ accountNumber: req.params.accountNumber });
+      if (!user) {
+        const error = new Error('User not found');
+        error.status = 404;
+        throw error;
+      }
+      await client.hSet('user:accountNumber', req.params.accountNumber, JSON.stringify(user));
+      res.json(user);
     }
-    res.json(user);
   } catch (error) {
     next(error);
   }
@@ -63,13 +78,20 @@ exports.getUserByAccountNumber = async (req, res, next) => {
 // Get a user by identityNumber
 exports.getUserByIdentityNumber = async (req, res, next) => {
   try {
-    const user = await User.findOne({ identityNumber: req.params.identityNumber });
-    if (!user) {
-      const error = new Error('User not found');
-      error.status = 404;
-      throw error;
+    const cachedUser = await client.hGet('user:identityNumber', req.params.identityNumber);
+
+    if (cachedUser) {
+      res.json(JSON.parse(cachedUser));
+    } else {
+      const user = await User.findOne({ identityNumber: req.params.identityNumber });
+      if (!user) {
+        const error = new Error('User not found');
+        error.status = 404;
+        throw error;
+      }
+      await client.hSet('user:identityNumber', req.params.identityNumber, JSON.stringify(user));
+      res.json(user);
     }
-    res.json(user);
   } catch (error) {
     next(error);
   }
@@ -78,7 +100,7 @@ exports.getUserByIdentityNumber = async (req, res, next) => {
 // Update a user
 exports.updateUser = async (req, res, next) => {
   try {
-    delete req.body.password
+    delete req.body.password;
     const updatedUser = await User.findByIdAndUpdate(req.params.userId, req.body, { new: true });
     if (!updatedUser) {
       const error = new Error('User not found');

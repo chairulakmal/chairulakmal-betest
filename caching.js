@@ -1,23 +1,20 @@
 const { createClient } = require('redis');
 
-function initRedisClient() {
-  const url = process.env.REDIS_URI;
-  if (url) {
-    const client = createClient({ url });
+const client = createClient({ url: process.env.REDIS_URL });
 
-    client.on('error', (error) => {
-      console.error('Failed to create the Redis client with error:');
-      console.error(error);
-    });
+client.connect().finally(() => {
+  client.on('error', (error) => {
+    console.error('Failed to create the Redis client with error:');
+    console.error(error);
+  });
 
-    client.on('connect', () => {
-      console.log('Connected to Redis successfully!');
-    });
+  client.on('connect', () => {
+    console.log('Connected to Redis successfully!');
+  });
 
-    client.on('end', () => {
-      console.log('Redis connection closed.');
-    });
-  }
-}
+  client.on('end', () => {
+    console.log('Redis connection closed.');
+  });
+});
 
-module.exports = initRedisClient;
+module.exports = client;

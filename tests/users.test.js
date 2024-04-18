@@ -51,6 +51,16 @@ describe('User API', () => {
         expect(response.body.userName).toBe(testUser.userName);
     });
 
+    // Test GET /users/:userId endpoint to retrieve a user by ID from cache
+    test('GET /users/:userId should retrieve a user by ID', async () => {
+        const response = await request(app)
+            .get(`/users/${userId}`)
+            .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.userName).toBe(testUser.userName);
+    });
+
     // Test PUT /users/:userId endpoint to update a user by ID
     test('PUT /users/:userId should update a user by ID', async () => {
         const updatedUser = { ...testUser, userName: 'updated_user' };

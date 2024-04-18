@@ -1,5 +1,6 @@
 const app = require('../app');
 const mongoose = require('mongoose');
+const client = require('../caching');
 
 // Function to drop the database
 const dropDatabase = async () => {
@@ -14,6 +15,7 @@ const dropDatabase = async () => {
 
 afterAll(async () => {
   // Call the function to drop the test database after test
+  await client.quit()
   dropDatabase();
   app.close();
 });
