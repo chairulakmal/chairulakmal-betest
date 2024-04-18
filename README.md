@@ -1,3 +1,24 @@
+# ms-chairulakmal-betest
+
+Express app with MongoDB and Redis.
+
+The api is deployed at https://ms-chairulakmal-betest.onrender.com for testing purposes. Check out the api docs and local testing instructions below.
+
+## Requirement
+
+1. Node
+2. MongoDB
+3. Redis
+
+## Testing Instructions
+
+1. Clone the repository to your local machine.
+2. Navigate to the project directory.
+3. Run `npm install` to install the dependencies.
+4. Create a `.env` file in the root directory based on the provided `.env-template` file. Fill in the required environment variables.
+5. Run `npm run test` to execute the test suite.
+6. Check the test results in the console.
+
 ## API Documentation
 
 ### Authentication
