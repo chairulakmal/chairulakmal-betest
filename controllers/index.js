@@ -78,6 +78,7 @@ exports.getUserByIdentityNumber = async (req, res, next) => {
 // Update a user
 exports.updateUser = async (req, res, next) => {
   try {
+    delete req.body.password
     const updatedUser = await User.findByIdAndUpdate(req.params.userId, req.body, { new: true });
     if (!updatedUser) {
       const error = new Error('User not found');
