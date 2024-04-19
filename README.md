@@ -2,7 +2,7 @@
 
 Express app with MongoDB and Redis.
 
-The api is deployed at https://ms-chairulakmal-betest.onrender.com for testing purposes. Check out the api docs and local testing instructions below.
+The api is deployed at [ms-chairulakmal-betest.onrender.com](https://ms-chairulakmal-betest.onrender.com) for testing purposes. Check out the api docs and local testing instructions below.
 
 ## Requirement
 
@@ -10,7 +10,7 @@ The api is deployed at https://ms-chairulakmal-betest.onrender.com for testing p
 2. MongoDB
 3. Redis
 
-## Testing Instructions
+## Local Testing Instructions
 
 1. Clone the repository to your local machine.
 2. Navigate to the project directory.
@@ -20,6 +20,16 @@ The api is deployed at https://ms-chairulakmal-betest.onrender.com for testing p
 6. Check the test results in the console.
 
 ## API Documentation
+
+### Endpoints
+
+- POST `/register` (Create a user)
+- POST `/login` (Authenticate a user with a userName and password)
+- GET `/users/:userId` Retrieves user information by database ID
+- GET `/users/account/:accountNumber` Retrieves user information by account number
+- GET `/users/identity/:identityNumber` Retrieves user information by identity number
+- PUT `/users/:userId` Updates user information by database ID
+- DELETE `/users/:userId` Deletes a user by database ID
 
 ### Authentication
 

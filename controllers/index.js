@@ -1,5 +1,5 @@
-const User = require('../models/User');
 const { mongoose } = require('mongoose');
+const User = require('../models/User');
 const { client, invalidateAll } = require('../utils/caching');
 const { encodeToken } = require('../utils/auth');
 const { comparePassword, hashPassword } = require('../utils/bcrypt');
