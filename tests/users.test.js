@@ -14,7 +14,7 @@ describe('User API', () => {
     };
 
     let userId; // Variable to store the ID of the created user
-    let token; // Variable to store the ID of the logged in user
+    let token; // Variable to store the token of the logged in user
 
     // Test POST /register endpoint to create a user
     test('POST /register should create a new user', async () => {
