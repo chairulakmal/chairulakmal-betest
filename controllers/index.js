@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { mongoose } = require('mongoose');
 const { client, invalidateAll } = require('../utils/caching');
 const { encodeToken } = require('../utils/auth');
 const { comparePassword, hashPassword } = require('../utils/bcrypt');
@@ -51,7 +52,12 @@ exports.getUserById = async (req, res, next) => {
       res.json(user);
     }
   } catch (error) {
-    next(error);
+    if (error instanceof mongoose.CastError) {
+      // Handle CastError by sending a custom error response with status code 404
+      res.status(404).json({ message: 'User not found' });
+    } else {
+      next(error);
+    }
   }
 };
 

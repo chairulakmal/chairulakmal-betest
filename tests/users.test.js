@@ -41,7 +41,7 @@ describe('User API', () => {
         expect(response.body).toMatchObject({ token });
     });
 
-    // Test GET /users/:userId endpoint to retrieve a user by ID
+    // 200 Test GET /users/:userId endpoint to retrieve a user by ID
     test('GET /users/:userId should retrieve a user by ID', async () => {
         const response = await request(app)
             .get(`/users/${userId}`)
@@ -49,6 +49,15 @@ describe('User API', () => {
 
         expect(response.status).toBe(200);
         expect(response.body.userName).toBe(testUser.userName);
+    });
+
+    // 404 Test GET /users/:userId endpoint to retrieve a non-existing user
+    test('GET /users/:userId should retrieve a user by ID', async () => {
+        const response = await request(app)
+            .get(`/users/123`)
+            .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(404);
     });
 
     // Test GET /users/:userId endpoint to retrieve a user by ID from cache
@@ -74,7 +83,7 @@ describe('User API', () => {
         expect(response.body.userName).toBe(updatedUser.userName);
     });
 
-    // Test GET /users/account/:accountNumber endpoint to retrieve a user by account number
+    // 200 Test GET /users/account/:accountNumber endpoint to retrieve a user by account number
     test('GET /users/account/:accountNumber should retrieve a user by account number', async () => {
         const response = await request(app)
             .get(`/users/account/${testUser.accountNumber}`)
@@ -84,7 +93,16 @@ describe('User API', () => {
         expect(response.body.accountNumber).toBe(testUser.accountNumber);
     });
 
-    // Test GET /users/identity/:identityNumber endpoint to retrieve a user by identity number
+    // 404 Test GET /users/account/:accountNumber endpoint to retrieve a non-existing user
+    test('GET /users/account/:accountNumber should retrieve a user by account number', async () => {
+        const response = await request(app)
+            .get(`/users/account/123`)
+            .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(404);
+    });
+
+    // 200 Test GET /users/identity/:identityNumber endpoint to retrieve a user by identity number
     test('GET /users/identity/:identityNumber should retrieve a user by identity number', async () => {
         const response = await request(app)
             .get(`/users/identity/${testUser.identityNumber}`)
@@ -92,6 +110,15 @@ describe('User API', () => {
 
         expect(response.status).toBe(200);
         expect(response.body.identityNumber).toBe(testUser.identityNumber);
+    });
+
+    // 404 Test GET /users/identity/:identityNumber endpoint to retrieve non-existing user
+    test('GET /users/identity/:identityNumber should retrieve a user by identity number', async () => {
+        const response = await request(app)
+            .get(`/users/identity/123`)
+            .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(404);
     });
 
     // Test DELETE /users/:userId endpoint to delete a user by ID
