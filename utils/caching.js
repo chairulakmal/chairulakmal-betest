@@ -18,7 +18,6 @@ client.connect().finally(() => {
 });
 
 const invalidateAll = async (id, user) => {
-  // eslint-disable-next-line no-underscore-dangle
   if (id) await client.HDEL('user:id', id);
   if (user.accountNumber) await client.HDEL('user:accountNumber', user.accountNumber);
   if (user.identityNumber) await client.HDEL('user:identityNumber', user.identityNumber);

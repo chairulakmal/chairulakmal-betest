@@ -103,13 +103,20 @@ exports.getUserByIdentityNumber = async (req, res, next) => {
 exports.updateUser = async (req, res, next) => {
   try {
     delete req.body.password;
-    const updatedUser = await User.findByIdAndUpdate(req.params.userId, req.body, { new: true });
-    if (!updatedUser) {
+
+    // Find the user by ID
+    const user = await User.findById(req.params.userId);
+
+    if (!user) {
       const error = new Error('User not found');
       error.status = 404;
       throw error;
     }
-    await invalidateAll(req.userId, updatedUser);
+
+    user.set(req.body);
+    const updatedUser = await user.save();
+
+    await invalidateAll(req.userId, user);
     res.json(updatedUser);
   } catch (error) {
     if (error.status) next(error);
