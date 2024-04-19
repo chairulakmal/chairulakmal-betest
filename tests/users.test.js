@@ -27,7 +27,6 @@ describe('User API', () => {
         expect(response.status).toBe(201);
         expect(response.body).toMatchObject(testUser);
         userId = response.body._id; // Save the created user ID for later use
-        token = encodeToken({ id: userId })
     });
 
     // Test POST /login endpoint to authenticate a user and get a token
@@ -36,6 +35,7 @@ describe('User API', () => {
         const response = await request(app)
             .post('/login')
             .send(testUser);
+        token = encodeToken({ id: userId })
 
         expect(response.status).toBe(200);
         expect(response.body).toMatchObject({ token });

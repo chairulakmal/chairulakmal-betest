@@ -21,7 +21,7 @@ The api is deployed at [ms-chairulakmal-betest.onrender.com](https://ms-chairula
 
 ## API Documentation
 
-### Endpoints
+### Endpoints Summary
 
 - POST `/register` (Create a user)
 - POST `/login` (Authenticate a user with a userName and password)
